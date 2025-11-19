@@ -1,0 +1,379 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Lexend', sans-serif;
+    background-color: #FFFFE5;
+    color: #6B456C;
+    padding: 20px;
+}
+
+
+.login-container {
+    display: flex;
+    max-width: 1200px;
+    margin: 0 auto;
+    min-height: 80vh;
+    align-items: center;
+
+}
+
+.login-image {
+    flex: 1;
+    max-width: 50%;
+}
+
+.login-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.login-form {
+    flex: 1;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.login-form h1 {
+    font-size: 2.5rem;
+    margin-bottom: 40px;
+    color: #6B456C;
+    font-weight: 600;
+}
+
+.input-field {
+    width: 100%;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    background-color: #FFFFFF;
+    border: 2px solid #D4C5D4;
+    border-radius: 25px;
+    font-family: 'Lexend', sans-serif;
+    font-size: 1rem;
+    color: #6B456C;
+    outline: none;
+}
+
+.input-field::placeholder {
+    color: #B8A9B8;
+}
+
+.input-field:focus {
+    border-color: #6B456C;
+}
+
+.form-links {
+    display: flex;
+    justify-content: ;
+    gap: 33%;
+    margin-bottom: 30px;
+}
+
+.link {
+    color: #6B456C;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.link:hover {
+    text-decoration: underline;
+}
+
+.btn-primary {
+    width: 30%;
+    padding: 15px;
+    background-color: #6B456C;
+    color: #FFFFFF;
+    border: 2px solid #6B456C;
+    border-radius: 25px;
+    font-family: 'Lexend', sans-serif;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    
+   
+   
+}
+
+
+.btn-primary:hover {
+    background-color: #FFFFFF;
+    color: #6B456C;
+}
+
+/* pag cadastro */
+.cadastro-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 40px;
+}
+
+.cadastro-container h1 {
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 40px;
+    color: #6B456C;
+    font-weight: 600;
+}
+
+.cadastro-form {
+    width: 100%;
+}
+
+.form-columns {
+    display: flex;
+    gap: 40px;
+    margin-bottom: 30px;
+}
+
+.column {
+    flex: 1;
+}
+
+.column h2 {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    color: #6B456C;
+    font-weight: 500;
+}
+
+.textarea-field {
+    min-height: 100px;
+    resize: vertical;
+    border-radius: 20px;
+    padding-top: 15px;
+}
+
+/*  pag Cliente  */
+.cliente-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.pet-perfil {
+    margin-bottom: 40px;
+}
+
+.pet-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+    color: #6B456C;
+    font-weight: 600;
+}
+
+.pet-content {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+}
+
+.pet-foto {
+    flex-shrink: 0;
+}
+
+.pet-foto img {
+    width: 250px;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 20px;
+    border: 5px solid #6B456C;
+}
+
+.pet-info {
+    flex: 1;
+}
+
+.pet-info p {
+    margin-bottom: 15px;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.pet-agenda {
+    flex-shrink: 0;
+}
+
+.agenda-box {
+    background-color: #FFFFFF;
+    padding: 25px;
+    border-radius: 20px;
+    border: 2px solid #D4C5D4;
+    min-width: 300px;
+}
+
+.agenda-box h3 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #6B456C;
+    font-weight: 600;
+}
+
+.agenda-item {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.agenda-item input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.agenda-item label {
+    cursor: pointer;
+    font-size: 0.95rem;
+}
+
+/* Vaccination Section */
+.vacina-section {
+    margin-bottom: 40px;
+}
+
+.vacina-section h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #6B456C;
+    font-weight: 600;
+}
+
+.vacina-table {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: #FFFFFF;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 15px;
+    overflow: hidden;
+    border: 2px solid #D4C5D4;
+}
+
+.vacina-table th,
+.vacina-table td {
+    padding: 20px;
+    text-align: center;
+    border-bottom: 1px solid #D4C5D4;
+}
+
+.vacina-table th {
+    background-color: #FFFFFF;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.vacina-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Seção de compromissos */
+.compromissos-section {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+}
+
+.button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.btn-secondary {
+    padding: 15px 30px;
+    background-color: #FFFFFF;
+    color: #6B456C;
+    border: 2px solid #6B456C;
+    border-radius: 25px;
+    font-family: 'Lexend', sans-serif;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background-color: #6B456C;
+    color: #FFFFFF;
+}
+
+.calendario-section {
+    background-color: #FFFFFF;
+    padding: 30px;
+    border-radius: 20px;
+    border: 2px solid #D4C5D4;
+    min-width: 350px;
+}
+
+.calendario-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.calendario-nav {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #6B456C;
+    cursor: pointer;
+    padding: 5px 15px;
+}
+
+.calendario-date {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #6B456C;
+}
+
+.compromissos-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.compromissos-item {
+    padding: 20px;
+    background-color: #FFFFFF;
+    border: 2px solid #D4C5D4;
+    border-radius: 25px;
+    text-align: center;
+    font-size: 1rem;
+    color: #6B456C;
+}
+
+
+@media (max-width: 768px) {
+    .login-container {
+        flex-direction: column;
+    }
+
+    .login-image {
+        max-width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .form-columns {
+        flex-direction: column;
+    }
+
+    .pet-content {
+        flex-direction: column;
+    }
+
+    .compromissos-section {
+        flex-direction: column;
+    }
+}

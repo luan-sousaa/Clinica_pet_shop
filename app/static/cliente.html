@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetLover - Perfil do Pet</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="cliente-container">
+        <div class="pet-perfil">
+            <div class="pet-header">
+                <h1>Nome do Pet</h1>
+            </div>
+
+            <div class="pet-content">
+                <div class="pet-foto">
+                    <img src="images/black-cat.jpg" alt="Gato Preto">
+                </div>
+
+                <div class="pet-info">
+                    <p><strong>Data de nascimento:</strong></p>
+                    <p><strong>Raça:</strong></p>
+                    <p><strong>Tutor:</strong></p>
+                    <p><strong>Observações:</strong></p>
+                </div>
+
+                <div class="pet-agenda">
+                    <div class="agenda-box">
+                        <h3>Agenda</h3>
+                        <div class="agenda-item">
+                            <input type="checkbox" id="consulta1">
+                            <label for="consulta1">Consulta de Rotina - 25/10</label>
+                        </div>
+                        <div class="agenda-item">
+                            <input type="checkbox" id="encontro">
+                            <label for="encontro">Encontro de Pets - 01/11</label>
+                        </div>
+                        <div class="agenda-item">
+                            <input type="checkbox" id="banho">
+                            <label for="banho">Banho e Tosa - 10/11</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="vacina-section">
+            <h2>Histórico de Vacinas</h2>
+            <table class="vacina-table">
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Vacina</th>
+                        <th>Dose</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="compromissos-section">
+            <div class="button-group">
+                <button class="btn-secondary">  Nova Consulta  </button>
+                <button class="btn-secondary">Nova Prescrição</button>
+            </div>
+
+            <div class="calendario-section">
+                <div class="calendario-header">
+                    <button class="calendario-nav">&lt;</button>
+                    <span class="calendario-date">10/09</span>
+                    <button class="calendario-nav">&gt;</button>
+                </div>
+                <div class="compromissos-list">
+                    <div class="compromissos-item">Consulta</div>
+                    <div class="compromissos-item">Curativo</div>
+                    <div class="compromissos-item">Cirurgia</div>
+                    <div class="compromissos-item">Consulta</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
