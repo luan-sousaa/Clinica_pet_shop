@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <button onclick="window.location.href='escolhacadastro.html'" style="position: absolute; top: 20px; left: 20px; padding: 10px 20px; background-color: #6B456C; color: white; border: none; border-radius: 5px; cursor: pointer; font-family: 'Lexend', sans-serif; font-weight: 500;">← Voltar</button>
     <div class="cadastro-container">
         <h1>Torne-se um PetLover!</h1>
         <form class="cadastro-form">
@@ -15,6 +16,7 @@
                 <div class="column">
                     <h2>Espaço do Tutor</h2>
                     <input type="text" placeholder="Nome do Tutor" class="input-field" required>
+                    <input type="text" placeholder="CPF (apenas números)" class="input-field" maxlength="11" pattern="[0-9]{11}" required>
                     <input type="email" placeholder="Digite seu email" class="input-field" required>
                     <input type="password" placeholder="Digite sua senha" class="input-field" required>
                     <input type="password" placeholder="Confirme a senha" class="input-field" required>
@@ -23,12 +25,20 @@
                     <h2>Espaço do Pet</h2>
                     <input type="text" placeholder="Nome do Pet" class="input-field" required>
                     <input type="text" placeholder="Raça" class="input-field" required>
-                    <input type="text" placeholder="Idade" class="input-field" required>
+                    <label for="data-nascimento" style="color: #6B456C; font-size: 14px; margin-bottom: 5px; display: block;">Data de Nascimento do Pet:</label>
+                    <input type="date" id="data-nascimento" class="input-field" required>
                     <textarea placeholder="Observações" class="input-field textarea-field"></textarea>
                 </div>
             </div>
             <center> <button type="submit" class="btn-primary">Enviar</button> </center>
         </form>
     </div>
+    
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/cadastro-tutor.controller.js"></script>
 </body>
 </html>

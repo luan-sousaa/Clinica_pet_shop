@@ -1,8 +1,30 @@
-from flask import render_template, request, jsonify, current_app as app
+from flask import render_template, request, jsonify, current_app as app, send_from_directory
+import os
+
+# Banco de dados em memória (temporário - substituir por BD real depois)
+usuarios_db = {
+    'admin@gmail.com': {
+        'senha': '1234',
+        'tipo': 'tutor',
+        'nome': 'Admin',
+        'pet_id': 1
+    },
+    'vet@gmail.com': {
+        'senha': '1234',
+        'tipo': 'veterinario',
+        'nome': 'Dr. Veterinário',
+        'crmv': '12345-SP'
+    }
+}
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return send_from_directory(app.static_folder, 'index.html')
+
+@app.route('/<path:path>')
+def serve_static(path):
+    """Servir arquivos estáticos"""
+    return send_from_directory(app.static_folder, path)
 
 # Adicione mais rotas conforme necessário
 @app.route('/login', methods=['POST'])
@@ -11,28 +33,89 @@ def login():
     data = request.get_json()
     email = data.get('email')
     senha = data.get('senha')
-    # Lógica de autenticação aqui
-    if email == 'admin@gmail.com' and senha == '1234':
-        return jsonify({'message': 'Login successful'}), 200
-    else:
-        return jsonify({'message': 'Credenciais inválidas'}), 401
     
-#cadastro de usuario e pet
+    # Verificar se usuário existe
+    if email in usuarios_db:
+        usuario = usuarios_db[email]
+        if usuario['senha'] == senha:
+            return jsonify({
+                'message': 'Login successful',
+                'user': {
+                    'email': email,
+                    'nome': usuario['nome'],
+                    'tipo': usuario['tipo'],
+                    'pet_id': usuario.get('pet_id'),
+                    'crmv': usuario.get('crmv')
+                }
+            }), 200
+    
+    return jsonify({'message': 'Credenciais inválidas'}), 401
+    
+#cadastro de usuario e pet (tutor)
 @app.route('/cadastro', methods=['POST'])
 def cadastro():
     data = request.get_json()
     nome_tutor = data.get('nome_tutor')
+    cpf = data.get('cpf')
     email = data.get('email')
     senha = data.get('senha')
     confirmar_senha = data.get('confirmar_senha')
     nome_pet = data.get('nome_pet')
     raca_pet = data.get('raca_pet')
-    idadade_pet = data.get('idade_pet')
+    datanascimento = data.get('datanascimento')
     observacoes_pet = data.get('observacoes_pet')
+    
     if senha != confirmar_senha:
         return jsonify({'message': 'Senhas não coincidem'}), 400
-    # Lógica de cadastro aqui
+    
+    if email in usuarios_db:
+        return jsonify({'message': 'Email já cadastrado'}), 400
+    
+    # Salvar usuário na memória
+    usuarios_db[email] = {
+        'senha': senha,
+        'tipo': 'tutor',
+        'nome': nome_tutor,
+        'cpf': cpf,
+        'pet_id': len(usuarios_db) + 1,
+        'pet': {
+            'nome': nome_pet,
+            'raca': raca_pet,
+            'datanascimento': datanascimento,
+            'observacoes': observacoes_pet
+        }
+    }
+    
     return jsonify({'message': f'User {nome_tutor} registered successfully'}), 201
+
+#cadastro de veterinário
+@app.route('/cadastro_vet', methods=['POST'])
+def cadastro_vet():
+    data = request.get_json()
+    nome_completo = data.get('nome_completo')
+    email = data.get('email')
+    senha = data.get('senha')
+    confirmar_senha = data.get('confirmar_senha')
+    crmv = data.get('crmv')
+    
+    if senha != confirmar_senha:
+        return jsonify({'message': 'Senhas não coincidem'}), 400
+    
+    if email in usuarios_db:
+        return jsonify({'message': 'Email já cadastrado'}), 400
+    
+    # Salvar veterinário na memória
+    usuarios_db[email] = {
+        'senha': senha,
+        'tipo': 'veterinario',
+        'nome': nome_completo,
+        'crmv': crmv
+    }
+    
+    return jsonify({
+        'message': f'Veterinário {nome_completo} cadastrado com sucesso',
+        'crmv': crmv
+    }), 201
 
 #esqueceu a senha
 @app.route('/esqueceu_senha', methods=['POST'])
@@ -53,9 +136,10 @@ def dados_pet():
     pet_data = {
         'nome_pet': 'Rex',
         'raca_pet': 'Labrador',
-        'idade_pet': 5,
+        'datanascimento': '2020-05-15',
         'observacoes_pet': 'Nenhuma',
         'servicos_agendados': [
+            {'servico': 'Consulta Veterinária', 'data': '2025-11-25', 'hora': '14:00'},
             {'servico': 'Banho', 'data': '2024-07-01', 'hora': '10:00'},
             {'servico': 'Tosa', 'data': '2024-07-15', 'hora': '14:00'}
         ]
@@ -69,8 +153,57 @@ def agendamentos():
     servico = data.get('servico')
     data_agendamento = data.get('data_agendamento')
     hora_agendamento = data.get('hora_agendamento')
+    cpf_cliente = data.get('cpf_cliente')
+    motivo = data.get('motivo')
+    observacoes = data.get('observacoes')
+    
     # Lógica para criar agendamento aqui
-    return jsonify({'message': f'Agendamento para {servico} em {data_agendamento} às {hora_agendamento} criado com sucesso'}), 201
+    # Quando o veterinário criar uma consulta, ela será adicionada aqui
+    
+    return jsonify({
+        'message': f'Agendamento para {servico} em {data_agendamento} às {hora_agendamento} criado com sucesso',
+        'agendamento': {
+            'servico': servico,
+            'data': data_agendamento,
+            'hora': hora_agendamento,
+            'cpf_cliente': cpf_cliente,
+            'motivo': motivo,
+            'observacoes': observacoes
+        }
+    }), 201
+
+# Listar consultas agendadas de um pet
+@app.route('/consultas/<int:pet_id>', methods=['GET'])
+def listar_consultas(pet_id):
+    """
+    Rota para listar consultas agendadas de um pet
+    """
+    consultas = [
+        {
+            'id': 1,
+            'data_consulta': '2025-11-25',
+            'hora_consulta': '14:00',
+            'motivo': 'Consulta de Rotina',
+            'veterinario': 'Dr. João Silva',
+            'status': 'agendada',
+            'observacoes': 'Trazer exames anteriores'
+        },
+        {
+            'id': 2,
+            'data_consulta': '2025-12-10',
+            'hora_consulta': '10:30',
+            'motivo': 'Retorno',
+            'veterinario': 'Dra. Maria Santos',
+            'status': 'agendada',
+            'observacoes': ''
+        }
+    ]
+    
+    return jsonify({
+        'pet_id': pet_id,
+        'total_consultas': len(consultas),
+        'consultas': consultas
+    }), 200
 
 # MÉDICO: Registrar nova vacina
 @app.route('/vacinas', methods=['POST'])
@@ -214,7 +347,7 @@ def criar_prescricao():
     Rota para veterinário criar uma prescrição médica
     Body JSON:
     {
-        "pet_id": 1,
+        "cpf_cliente": "123.456.789-00",
         "veterinario": "Dr. João Silva",
         "veterinario_id": 1,
         "data_consulta": "2025-11-11",
@@ -235,7 +368,7 @@ def criar_prescricao():
     data = request.get_json()
     
     # Validações básicas
-    campos_obrigatorios = ['pet_id', 'veterinario', 'data_consulta', 'diagnostico', 'medicamentos']
+    campos_obrigatorios = ['cpf_cliente', 'veterinario', 'data_consulta', 'diagnostico', 'medicamentos']
     for campo in campos_obrigatorios:
         if not data.get(campo):
             return jsonify({'error': f'Campo {campo} é obrigatório'}), 400
@@ -244,10 +377,10 @@ def criar_prescricao():
     if not data.get('medicamentos') or len(data.get('medicamentos')) == 0:
         return jsonify({'error': 'É necessário prescrever pelo menos 1 medicamento'}), 400
     
-    # Aqui você salvaria no banco de dados
+    # Aqui salvaria no banco de dados
     prescricao = {
         'id': 1,  # ID gerado pelo banco
-        'pet_id': data.get('pet_id'),
+        'cpf_cliente': data.get('cpf_cliente'),
         'veterinario': data.get('veterinario'),
         'veterinario_id': data.get('veterinario_id'),
         'data_consulta': data.get('data_consulta'),

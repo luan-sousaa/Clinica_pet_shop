@@ -12,6 +12,7 @@
         <div class="pet-perfil">
             <div class="pet-header">
                 <h1>Nome do Pet</h1>
+                <button id="logout-btn" class="btn-logout" style="position: absolute; top: 20px; right: 20px; padding: 10px 20px; background-color: #f44336; color: white; border: none; border-radius: 5px; cursor: pointer; font-family: 'Lexend', sans-serif; font-weight: 500;">Sair</button>
             </div>
 
             <div class="pet-content">
@@ -76,26 +77,26 @@
             </table>
         </div>
 
-        <div class="compromissos-section">
-            <div class="button-group">
-                <button class="btn-secondary">  Nova Consulta  </button>
-                <button class="btn-secondary">Nova Prescrição</button>
+        <div class="consultas-section" style="margin-top: 30px;">
+            <h2>Consultas</h2>
+            <div id="consultas-lista" style="display: grid; gap: 15px; margin-top: 20px;">
+                <p style="text-align: center; color: #999;">Nenhuma consulta registrada ainda</p>
             </div>
+        </div>
 
-            <div class="calendario-section">
-                <div class="calendario-header">
-                    <button class="calendario-nav">&lt;</button>
-                    <span class="calendario-date">10/09</span>
-                    <button class="calendario-nav">&gt;</button>
-                </div>
-                <div class="compromissos-list">
-                    <div class="compromissos-item">Consulta</div>
-                    <div class="compromissos-item">Curativo</div>
-                    <div class="compromissos-item">Cirurgia</div>
-                    <div class="compromissos-item">Consulta</div>
-                </div>
+        <div class="prescricoes-section" style="margin-top: 30px;">
+            <h2>Prescrições Médicas</h2>
+            <div id="prescricoes-lista" style="display: grid; gap: 15px; margin-top: 20px;">
+                <p style="text-align: center; color: #999;">Nenhuma prescrição registrada ainda</p>
             </div>
         </div>
     </div>
+    
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/cliente.controller.js"></script>
 </body>
 </html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetLover - Redefinir Senha</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <button onclick="window.location.href='index.html'" style="position: absolute; top: 20px; left: 20px; padding: 10px 20px; background-color: #6B456C; color: white; border: none; border-radius: 5px; cursor: pointer; font-family: 'Lexend', sans-serif; font-weight: 500;">← Voltar</button>
+    
+    <div class="login-container">
+        <div class="login-image">
+            <img style="padding-top: 35%;" src="images/Adobe Express - file (2).png" alt="Cachorro e Gato">
+        </div>
+        <div class="login-form">
+            <h1>Redefinir Senha</h1>
+            <p style="color: #666; margin-bottom: 30px;">Digite seu email e a nova senha</p>
+            <form id="form-redefinir-senha">
+                <input style="width: 70%;" type="email" name="email" placeholder="Digite seu email" class="input-field" required>
+                <input style="width: 70%;" type="password" name="nova_senha" placeholder="Nova senha" class="input-field" required>
+                <input style="width: 70%;" type="password" name="confirmar_senha" placeholder="Confirme a nova senha" class="input-field" required>
+                <button style="width:70%; margin-top: 20px;" type="submit" class="btn-primary">Redefinir Senha</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/redefinir-senha.controller.js"></script>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetLover - Área do Veterinário</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="cliente-container">
+        <div class="vet-header" style="background-color: #6B456C; color: white; padding: 20px; border-radius: 10px; margin-bottom: 30px; position: relative;">
+            <h1 style="margin: 0;">Área do Veterinário</h1>
+            <p id="vet-nome" style="margin: 10px 0 0 0; opacity: 0.9;">Bem-vindo(a)!</p>
+            <button id="logout-btn" class="btn-logout" style="position: absolute; top: 20px; right: 20px; padding: 10px 20px; background-color: #f44336; color: white; border: none; border-radius: 5px; cursor: pointer; font-family: 'Lexend', sans-serif; font-weight: 500;">Sair</button>
+        </div>
+
+        <div class="vet-actions" style="display: flex; gap: 20px; margin-bottom: 30px; flex-wrap: wrap;">
+            <button id="btn-nova-consulta" class="btn-secondary" style="flex: 1; min-width: 200px;">Nova Consulta</button>
+            <button id="btn-nova-prescricao" class="btn-secondary" style="flex: 1; min-width: 200px;">Nova Prescrição</button>
+        </div>
+
+        <!-- Seção de Buscar Pet -->
+        <div class="buscar-pet-section" style="background-color: white; padding: 20px; border-radius: 10px; margin-bottom: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+            <h2 style="color: #6B456C; margin-bottom: 15px;">Buscar Pet</h2>
+            <div style="display: flex; gap: 10px;">
+                <input type="text" id="input-cpf-cliente" placeholder="CPF do Cliente (11 dígitos)" class="input-field" style="flex: 1;" maxlength="11" pattern="[0-9]{11}">
+                <button id="btn-buscar-pet" class="btn-primary">Buscar</button>
+            </div>
+            
+            <div id="pet-info-result" style="margin-top: 20px; display: none;">
+                <div class="pet-info">
+                    <p><strong>Nome do Pet:</strong> <span id="pet-nome">-</span></p>
+                    <p><strong>Raça:</strong> <span id="pet-raca">-</span></p>
+                    <p><strong>Idade:</strong> <span id="pet-idade">-</span> anos</p>
+                    <p><strong>Tutor:</strong> <span id="pet-tutor">-</span></p>
+                    <p><strong>Observações:</strong> <span id="pet-obs">-</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Nova Consulta -->
+        <div id="modal-consulta" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+            <div class="modal-content" style="background-color: white; padding: 30px; border-radius: 10px; max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 style="color: #6B456C; margin: 0;">Nova Consulta</h2>
+                    <button class="modal-close" data-modal="modal-consulta" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #666;">&times;</button>
+                </div>
+                
+                <form id="form-consulta">
+                    <input type="text" name="cpf_cliente" placeholder="CPF do Cliente (11 dígitos)" class="input-field" required maxlength="11" pattern="[0-9]{11}">
+                    <input type="date" name="data_consulta" class="input-field" required>
+                    <input type="time" name="hora_consulta" class="input-field" required>
+                    <textarea name="motivo" placeholder="Motivo da consulta" class="input-field" rows="3" required></textarea>
+                    <textarea name="observacoes" placeholder="Observações" class="input-field" rows="3"></textarea>
+                    
+                    <div style="display: flex; gap: 10px; margin-top: 20px;">
+                        <button type="button" class="modal-close" data-modal="modal-consulta" style="flex: 1; padding: 12px; background-color: #ccc; color: #333; border: none; border-radius: 5px; cursor: pointer; font-family: 'Lexend', sans-serif;">Cancelar</button>
+                        <button type="submit" class="btn-primary" style="flex: 1;">Agendar Consulta</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal Nova Prescrição -->
+        <div id="modal-prescricao" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+            <div class="modal-content" style="background-color: white; padding: 30px; border-radius: 10px; max-width: 700px; width: 90%; max-height: 90vh; overflow-y: auto;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 style="color: #6B456C; margin: 0;">Nova Prescrição Médica</h2>
+                    <button class="modal-close" data-modal="modal-prescricao" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #666;">&times;</button>
+                </div>
+                
+                <form id="form-prescricao">
+                    <input type="text" name="cpf_cliente" placeholder="CPF do Cliente (11 dígitos)" class="input-field" required maxlength="11" pattern="[0-9]{11}">
+                    <input type="date" name="data_consulta" class="input-field" required>
+                    <textarea name="diagnostico" placeholder="Diagnóstico" class="input-field" rows="3" required></textarea>
+                    
+                    <h3 style="color: #6B456C; margin-top: 20px; margin-bottom: 10px;">Medicamentos</h3>
+                    <div id="medicamentos-container">
+                        <div class="medicamento-item" style="background-color: #f5f5f5; padding: 15px; border-radius: 8px; margin-bottom: 10px;">
+                            <input type="text" name="medicamento_nome[]" placeholder="Nome do medicamento" class="input-field" required>
+                            <input type="text" name="medicamento_dosagem[]" placeholder="Dosagem (ex: 1 comprimido)" class="input-field" required>
+                            <input type="text" name="medicamento_frequencia[]" placeholder="Frequência (ex: 2x ao dia)" class="input-field" required>
+                            <input type="text" name="medicamento_duracao[]" placeholder="Duração (ex: 7 dias)" class="input-field" required>
+                            <textarea name="medicamento_obs[]" placeholder="Observações do medicamento" class="input-field" rows="2"></textarea>
+                        </div>
+                    </div>
+                    
+                    <button type="button" id="btn-add-medicamento" style="width: 100%; padding: 10px; background-color: #6B456C; color: white; border: none; border-radius: 5px; cursor: pointer; font-family: 'Lexend', sans-serif; margin-bottom: 15px;">+ Adicionar Medicamento</button>
+                    
+                    <textarea name="orientacoes_gerais" placeholder="Orientações gerais ao tutor" class="input-field" rows="3"></textarea>
+                    
+                    <div style="display: flex; gap: 10px; margin-top: 20px;">
+                        <button type="button" class="modal-close" data-modal="modal-prescricao" style="flex: 1; padding: 12px; background-color: #ccc; color: #333; border: none; border-radius: 5px; cursor: pointer; font-family: 'Lexend', sans-serif;">Cancelar</button>
+                        <button type="submit" class="btn-primary" style="flex: 1;">Criar Prescrição</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Histórico de Atendimentos -->
+        <div class="historico-section" style="background-color: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+            <h2 style="color: #6B456C; margin-bottom: 15px;">Atendimentos Recentes</h2>
+            <div id="historico-lista" style="max-height: 400px; overflow-y: auto;">
+                <p style="text-align: center; color: #999;">Nenhum atendimento registrado ainda</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/veterinario.controller.js"></script>
+</body>
+</html>
