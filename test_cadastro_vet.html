@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste - Cadastro Veterinário</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .test-section {
+            background: #f5f5f5;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        input, button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+        button {
+            background: #6B456C;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background: #543657;
+        }
+        pre {
+            background: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>Teste de Cadastro de Veterinário</h1>
+    
+    <div class="test-section">
+        <h2>Teste 1: CRMV com barra e estado (ex: 12345/SP)</h2>
+        <button onclick="testCadastro1()">Testar CRMV: 12345/SP</button>
+        <pre id="result1"></pre>
+    </div>
+
+    <div class="test-section">
+        <h2>Teste 2: CRMV somente números (ex: 54321)</h2>
+        <button onclick="testCadastro2()">Testar CRMV: 54321</button>
+        <pre id="result2"></pre>
+    </div>
+
+    <div class="test-section">
+        <h2>Teste 3: CRMV com espaços e letras (ex: CRMV 98765 RJ)</h2>
+        <button onclick="testCadastro3()">Testar CRMV: CRMV 98765 RJ</button>
+        <pre id="result3"></pre>
+    </div>
+
+    <div class="test-section">
+        <h2>Teste 4: Cadastro Manual</h2>
+        <input type="text" id="nomeCompleto" placeholder="Nome Completo" value="Dr. Teste Manual">
+        <input type="email" id="email" placeholder="Email" value="">
+        <input type="password" id="senha" placeholder="Senha" value="senha123">
+        <input type="password" id="confirmarSenha" placeholder="Confirmar Senha" value="senha123">
+        <input type="text" id="crmv" placeholder="CRMV (ex: 12345/SP)" value="">
+        <button onclick="testCadastroManual()">Cadastrar</button>
+        <pre id="result4"></pre>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000';
+        let testCounter = 1;
+
+        async function cadastrarVet(dados) {
+            try {
+                const response = await fetch(`${API_URL}/cadastro_vet`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(dados)
+                });
+
+                const data = await response.json();
+                return {
+                    status: response.status,
+                    success: response.ok,
+                    data: data
+                };
+            } catch (error) {
+                return {
+                    status: 0,
+                    success: false,
+                    error: error.message
+                };
+            }
+        }
+
+        async function testCadastro1() {
+            const result = document.getElementById('result1');
+            result.textContent = 'Testando...';
+
+            const dados = {
+                nome_completo: 'Dr. João Silva',
+                email: `joao.silva${testCounter++}@vet.com`,
+                senha: 'senha123',
+                confirmar_senha: 'senha123',
+                crmv: '12345/SP'
+            };
+
+            const response = await cadastrarVet(dados);
+            result.innerHTML = `<span class="${response.success ? 'success' : 'error'}">
+Status: ${response.status}
+${response.success ? '✅ SUCESSO' : '❌ ERRO'}
+
+Dados enviados:
+${JSON.stringify(dados, null, 2)}
+
+Resposta:
+${JSON.stringify(response.data, null, 2)}
+</span>`;
+        }
+
+        async function testCadastro2() {
+            const result = document.getElementById('result2');
+            result.textContent = 'Testando...';
+
+            const dados = {
+                nome_completo: 'Dra. Maria Santos',
+                email: `maria.santos${testCounter++}@vet.com`,
+                senha: 'senha123',
+                confirmar_senha: 'senha123',
+                crmv: '54321'
+            };
+
+            const response = await cadastrarVet(dados);
+            result.innerHTML = `<span class="${response.success ? 'success' : 'error'}">
+Status: ${response.status}
+${response.success ? '✅ SUCESSO' : '❌ ERRO'}
+
+Dados enviados:
+${JSON.stringify(dados, null, 2)}
+
+Resposta:
+${JSON.stringify(response.data, null, 2)}
+</span>`;
+        }
+
+        async function testCadastro3() {
+            const result = document.getElementById('result3');
+            result.textContent = 'Testando...';
+
+            const dados = {
+                nome_completo: 'Dr. Paulo Oliveira',
+                email: `paulo.oliveira${testCounter++}@vet.com`,
+                senha: 'senha123',
+                confirmar_senha: 'senha123',
+                crmv: 'CRMV 98765 RJ'
+            };
+
+            const response = await cadastrarVet(dados);
+            result.innerHTML = `<span class="${response.success ? 'success' : 'error'}">
+Status: ${response.status}
+${response.success ? '✅ SUCESSO' : '❌ ERRO'}
+
+Dados enviados:
+${JSON.stringify(dados, null, 2)}
+
+Resposta:
+${JSON.stringify(response.data, null, 2)}
+</span>`;
+        }
+
+        async function testCadastroManual() {
+            const result = document.getElementById('result4');
+            result.textContent = 'Testando...';
+
+            const dados = {
+                nome_completo: document.getElementById('nomeCompleto').value,
+                email: document.getElementById('email').value || `teste${testCounter++}@vet.com`,
+                senha: document.getElementById('senha').value,
+                confirmar_senha: document.getElementById('confirmarSenha').value,
+                crmv: document.getElementById('crmv').value || `${Math.floor(Math.random() * 90000) + 10000}`
+            };
+
+            const response = await cadastrarVet(dados);
+            result.innerHTML = `<span class="${response.success ? 'success' : 'error'}">
+Status: ${response.status}
+${response.success ? '✅ SUCESSO' : '❌ ERRO'}
+
+Dados enviados:
+${JSON.stringify(dados, null, 2)}
+
+Resposta:
+${JSON.stringify(response.data, null, 2)}
+</span>`;
+        }
+
+        // Gerar email único automaticamente
+        document.getElementById('email').value = `teste${Math.floor(Math.random() * 10000)}@vet.com`;
+        document.getElementById('crmv').value = `${Math.floor(Math.random() * 90000) + 10000}/SP`;
+    </script>
+</body>
+</html>

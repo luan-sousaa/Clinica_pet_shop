@@ -19,6 +19,12 @@ class APIService {
             'Content-Type': 'application/json',
         };
 
+        // Adicionar token JWT se existir
+        const token = Auth.getToken();
+        if (token) {
+            defaultHeaders['Authorization'] = `Bearer ${token}`;
+        }
+
         const config = {
             method: options.method || 'GET',
             headers: { ...defaultHeaders, ...options.headers },
@@ -117,15 +123,22 @@ class APIService {
     }
 
     /**
+     * Buscar pet por CPF do cliente (para veterinários)
+     */
+    async buscarPetPorCpf(cpf) {
+        return this.request(`/buscar_pet_cpf/${cpf}`);
+    }
+
+    /**
      * Criar agendamento
      */
-    async criarAgendamento(servico, dataAgendamento, horaAgendamento) {
+    async criarAgendamento(dados) {
         return this.request(CONFIG.ENDPOINTS.AGENDAMENTOS, {
             method: 'POST',
             body: {
-                servico,
-                data_agendamento: dataAgendamento,
-                hora_agendamento: horaAgendamento
+                cpf_cliente: dados.cpf_cliente,
+                data_agendamento: dados.data_agendamento,
+                valor: dados.valor || 150.00  // Valor padrão se não informado
             }
         });
     }

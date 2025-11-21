@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste - Agendar Consulta</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .test-section {
+            background: #f5f5f5;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        input, button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+        button {
+            background: #6B456C;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background: #543657;
+        }
+        pre {
+            background: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            max-height: 400px;
+        }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+    </style>
+</head>
+<body>
+    <h1>Teste - Agendar Consulta Veterinária</h1>
+    
+    <div class="test-section">
+        <h2>1. Login como Veterinário</h2>
+        <input type="email" id="email" placeholder="Email do veterinário" value="">
+        <input type="password" id="senha" placeholder="Senha" value="senha123">
+        <button onclick="fazerLogin()">Fazer Login</button>
+        <pre id="resultLogin"></pre>
+    </div>
+
+    <div class="test-section">
+        <h2>2. Agendar Consulta</h2>
+        <p><strong>CPF do Cliente:</strong> 11122233344 (Carlos Silva - Pet: Thor)</p>
+        <input type="text" id="cpf" placeholder="CPF (11 dígitos)" maxlength="11" value="11122233344">
+        <input type="date" id="data" placeholder="Data da consulta">
+        <input type="number" id="valor" placeholder="Valor" value="150.00" step="0.01" min="0">
+        <button onclick="agendarConsulta()">Agendar Consulta</button>
+        <pre id="resultAgendamento"></pre>
+    </div>
+
+    <div class="test-section">
+        <h2>3. Dados Enviados</h2>
+        <p>Quando você clicar em "Agendar Consulta", estes dados serão enviados:</p>
+        <pre id="dadosEnviar">{
+  "cpf_cliente": "11122233344",
+  "data_agendamento": "2025-11-25",
+  "valor": 150.00
+}</pre>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000';
+        let token = null;
+
+        // Definir data padrão para amanhã
+        const amanha = new Date();
+        amanha.setDate(amanha.getDate() + 1);
+        document.getElementById('data').value = amanha.toISOString().split('T')[0];
+
+        // Auto-carregar email do último vet
+        const emailVet = localStorage.getItem('last_vet_email') || '';
+        document.getElementById('email').value = emailVet;
+
+        // Auto-carregar token se já estiver logado
+        const savedToken = localStorage.getItem('token');
+        if (savedToken) {
+            token = savedToken;
+            document.getElementById('resultLogin').innerHTML = '<span class="success">✅ Token encontrado! Você já está logado.</span>';
+        }
+
+        async function fazerLogin() {
+            const result = document.getElementById('resultLogin');
+            result.innerHTML = '<span class="info">Fazendo login...</span>';
+
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('senha').value;
+
+            try {
+                const response = await fetch(`${API_URL}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, senha })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    token = data.token;
+                    localStorage.setItem('token', token);
+                    localStorage.setItem('last_vet_email', email);
+
+                    result.innerHTML = `<span class="success">✅ Login realizado!
+
+Usuário: ${data.user.nome}
+Tipo: ${data.user.tipo}
+CRMV: ${data.user.crmv || 'N/A'}
+
+Token: ${token.substring(0, 50)}...
+
+Agora você pode agendar consultas!</span>`;
+                } else {
+                    result.innerHTML = `<span class="error">❌ Erro ao fazer login:
+${JSON.stringify(data, null, 2)}</span>`;
+                }
+            } catch (error) {
+                result.innerHTML = `<span class="error">❌ Erro: ${error.message}</span>`;
+            }
+        }
+
+        async function agendarConsulta() {
+            const result = document.getElementById('resultAgendamento');
+            
+            if (!token) {
+                result.innerHTML = '<span class="error">❌ Faça login primeiro!</span>';
+                return;
+            }
+
+            const cpf = document.getElementById('cpf').value.trim();
+            const data = document.getElementById('data').value;
+            const valor = parseFloat(document.getElementById('valor').value) || 150.00;
+
+            // Validações
+            if (!cpf || cpf.length !== 11) {
+                result.innerHTML = '<span class="error">❌ CPF deve ter 11 dígitos</span>';
+                return;
+            }
+
+            if (!data) {
+                result.innerHTML = '<span class="error">❌ Data é obrigatória</span>';
+                return;
+            }
+
+            const dados = {
+                cpf_cliente: cpf,
+                data_agendamento: data,
+                valor: valor
+            };
+
+            // Atualizar preview dos dados
+            document.getElementById('dadosEnviar').textContent = JSON.stringify(dados, null, 2);
+
+            result.innerHTML = '<span class="info">Agendando consulta...</span>';
+
+            try {
+                const response = await fetch(`${API_URL}/agendamentos`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(dados)
+                });
+
+                const responseData = await response.json();
+                
+                if (response.ok) {
+                    result.innerHTML = `<span class="success">✅ Consulta agendada com sucesso!
+
+Status: ${response.status}
+
+Dados da Consulta:
+${JSON.stringify(responseData, null, 2)}
+
+---
+ID da Consulta: ${responseData.consulta_id}
+Data: ${responseData.data}
+Pet: ${responseData.pet}
+Cliente: ${responseData.cliente}
+</span>`;
+                } else {
+                    result.innerHTML = `<span class="error">❌ Erro ao agendar consulta:
+Status: ${response.status}
+
+${JSON.stringify(responseData, null, 2)}
+
+Campos esperados pelo backend:
+- cpf_cliente (obrigatório)
+- data_agendamento (obrigatório)
+- valor (obrigatório)
+
+Campos enviados:
+${JSON.stringify(dados, null, 2)}
+</span>`;
+                }
+            } catch (error) {
+                result.innerHTML = `<span class="error">❌ Erro: ${error.message}</span>`;
+            }
+        }
+
+        // Atualizar preview ao alterar campos
+        document.getElementById('cpf').addEventListener('input', atualizarPreview);
+        document.getElementById('data').addEventListener('input', atualizarPreview);
+        document.getElementById('valor').addEventListener('input', atualizarPreview);
+
+        function atualizarPreview() {
+            const cpf = document.getElementById('cpf').value;
+            const data = document.getElementById('data').value;
+            const valor = parseFloat(document.getElementById('valor').value) || 150.00;
+            
+            document.getElementById('dadosEnviar').textContent = JSON.stringify({
+                cpf_cliente: cpf,
+                data_agendamento: data,
+                valor: valor
+            }, null, 2);
+        }
+    </script>
+</body>
+</html>

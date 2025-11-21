@@ -80,10 +80,18 @@ class ClienteController {
             petHeader.textContent = data.nome_pet || 'Nome do Pet';
         }
 
+        // Formatar data de nascimento
+        let dataNascimento = 'N/A';
+        if (data.datanascimento) {
+            dataNascimento = Utils.formatDate(data.datanascimento);
+        } else if (data.idade) {
+            dataNascimento = `${Math.floor(data.idade)} anos`;
+        }
+
         // Atualizar informações
         const infoParagraphs = document.querySelectorAll('.pet-info p');
         if (infoParagraphs.length >= 4) {
-            infoParagraphs[0].innerHTML = `<strong>Data de nascimento:</strong> ${data.datanascimento || data.idade_pet || 'N/A'}`;
+            infoParagraphs[0].innerHTML = `<strong>Data de nascimento:</strong> ${dataNascimento}`;
             infoParagraphs[1].innerHTML = `<strong>Raça:</strong> ${data.raca_pet || 'N/A'}`;
             infoParagraphs[2].innerHTML = `<strong>Tutor:</strong> ${Auth.getUser()?.nome || 'N/A'}`;
             infoParagraphs[3].innerHTML = `<strong>Observações:</strong> ${data.observacoes_pet || 'Nenhuma'}`;

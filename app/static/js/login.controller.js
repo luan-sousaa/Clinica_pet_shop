@@ -71,6 +71,12 @@ class LoginController {
             const response = await api.login(email, senha);
 
             if (response.success) {
+                // Salvar token JWT
+                const token = response.data.token;
+                if (token) {
+                    Auth.saveToken(token);
+                }
+                
                 // Salvar dados do usuário
                 const userData = response.data.user;
                 Auth.saveUser(userData);
@@ -82,7 +88,7 @@ class LoginController {
                 Utils.showSuccess(CONFIG.MESSAGES.SUCCESS_LOGIN);
                 
                 // Redirecionar baseado no tipo de usuário
-                if (userData.tipo === 'veterinario') {
+                if (userData.tipo === 'Veterinario') {
                     Utils.redirect('veterinario.html', 1500);
                 } else {
                     Utils.redirect('cliente.html', 1500);

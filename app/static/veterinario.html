@@ -51,6 +51,7 @@
                     <input type="text" name="cpf_cliente" placeholder="CPF do Cliente (11 dígitos)" class="input-field" required maxlength="11" pattern="[0-9]{11}">
                     <input type="date" name="data_consulta" class="input-field" required>
                     <input type="time" name="hora_consulta" class="input-field" required>
+                    <input type="number" name="valor" placeholder="Valor da consulta (padrão: R$ 150,00)" class="input-field" step="0.01" min="0" value="150.00">
                     <textarea name="motivo" placeholder="Motivo da consulta" class="input-field" rows="3" required></textarea>
                     <textarea name="observacoes" placeholder="Observações" class="input-field" rows="3"></textarea>
                     
@@ -108,10 +109,10 @@
     </div>
     
     <!-- Scripts -->
-    <script src="js/config.js"></script>
-    <script src="js/utils.js"></script>
-    <script src="js/api.js"></script>
-    <script src="js/auth.js"></script>
-    <script src="js/veterinario.controller.js"></script>
+    <script src="js/config.js?v=4"></script>
+    <script src="js/utils.js?v=4"></script>
+    <script src="js/api.js?v=4"></script>
+    <script src="js/auth.js?v=4"></script>
+    <script src="js/veterinario.controller.js?v=4"></script>
 </body>
 </html>

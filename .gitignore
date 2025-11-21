@@ -32,6 +32,13 @@ instance/
 .env
 .flaskenv
 
+# Backup
+*_old.py
+*.backup
+
+# Storage temporário
+prescricoes.json
+
 # IDE
 .vscode/
 .idea/

@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste - Prescrições e Consultas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .test-section {
+            background: #f5f5f5;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        button {
+            padding: 12px 20px;
+            margin: 10px 5px;
+            font-size: 14px;
+            background: #6B456C;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background: #543657;
+        }
+        pre {
+            background: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            max-height: 400px;
+        }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Teste Completo - Prescrições e Consultas</h1>
+    
+    <div class="test-section">
+        <h2>1. Login</h2>
+        <button onclick="loginVet()">Login como Veterinário</button>
+        <button onclick="loginCliente()">Login como Cliente</button>
+        <pre id="resultLogin"></pre>
+    </div>
+
+    <div class="grid">
+        <div class="test-section">
+            <h2>2. Criar Prescrição (Vet)</h2>
+            <button onclick="criarPrescricao()">Criar Prescrição para Thor</button>
+            <pre id="resultPrescricao"></pre>
+        </div>
+
+        <div class="test-section">
+            <h2>3. Listar Prescrições (Cliente)</h2>
+            <button onclick="listarPrescricoes()">Listar Prescrições do Pet 1</button>
+            <pre id="resultListarPrescricoes"></pre>
+        </div>
+    </div>
+
+    <div class="grid">
+        <div class="test-section">
+            <h2>4. Listar Consultas (Cliente)</h2>
+            <button onclick="listarConsultas()">Listar Consultas do Pet 1</button>
+            <pre id="resultListarConsultas"></pre>
+        </div>
+
+        <div class="test-section">
+            <h2>5. Ver Detalhes Prescrição</h2>
+            <button onclick="verDetalhes()">Ver Detalhes da Prescrição 1</button>
+            <pre id="resultDetalhes"></pre>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000';
+        let tokenVet = null;
+        let tokenCliente = null;
+
+        async function loginVet() {
+            const result = document.getElementById('resultLogin');
+            result.innerHTML = '<span class="info">Fazendo login como veterinário...</span>';
+
+            const email = localStorage.getItem('last_vet_email') || 'vet@teste.com';
+
+            try {
+                const response = await fetch(`${API_URL}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, senha: 'senha123' })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    tokenVet = data.token;
+                    result.innerHTML = `<span class="success">✅ Login VET realizado!
+Usuário: ${data.user.nome}
+Token salvo!</span>`;
+                } else {
+                    result.innerHTML = `<span class="error">❌ Erro: ${JSON.stringify(data, null, 2)}</span>`;
+                }
+            } catch (error) {
+                result.innerHTML = `<span class="error">❌ Erro: ${error.message}</span>`;
+            }
+        }
+
+        async function loginCliente() {
+            const result = document.getElementById('resultLogin');
+            result.innerHTML = '<span class="info">Fazendo login como cliente...</span>';
+
+            try {
+                const response = await fetch(`${API_URL}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: 'carlos@teste.com', senha: 'senha123' })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    tokenCliente = data.token;
+                    result.innerHTML = `<span class="success">✅ Login CLIENTE realizado!
+Usuário: ${data.user.nome}
+Pet ID: ${data.user.pet_id}
+Token salvo!</span>`;
+                } else {
+                    result.innerHTML = `<span class="error">❌ Erro: ${JSON.stringify(data, null, 2)}</span>`;
+                }
+            } catch (error) {
+                result.innerHTML = `<span class="error">❌ Erro: ${error.message}</span>`;
+            }
+        }
+
+        async function criarPrescricao() {
+            const result = document.getElementById('resultPrescricao');
+            
+            if (!tokenVet) {
+                result.innerHTML = '<span class="error">❌ Faça login como veterinário primeiro!</span>';
+                return;
+            }
+
+            result.innerHTML = '<span class="info">Criando prescrição...</span>';
+
+            const prescricaoData = {
+                cpf_cliente: '11122233344',
+                veterinario: 'Dr. João Silva',
+                data_consulta: '2025-11-21',
+                diagnostico: 'Otite Externa',
+                medicamentos: [
+                    {
+                        nome: 'Otosynalar',
+                        dosagem: '3 gotas',
+                        frequencia: '3x ao dia',
+                        duracao: '7 dias',
+                        observacoes: 'Aplicar no ouvido afetado'
+                    },
+                    {
+                        nome: 'Anti-inflamatório',
+                        dosagem: '1 comprimido',
+                        frequencia: '2x ao dia',
+                        duracao: '5 dias',
+                        observacoes: 'Dar com comida'
+                    }
+                ],
+                orientacoes_gerais: 'Manter o ouvido limpo e seco. Retornar em 7 dias para reavaliação.',
+                retorno: '2025-11-28'
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/prescricoes`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${tokenVet}`
+                    },
+                    body: JSON.stringify(prescricaoData)
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    result.innerHTML = `<span class="success">✅ Prescrição criada!
+
+ID: ${data.prescricao.id}
+Diagnóstico: ${data.prescricao.diagnostico}
+Medicamentos: ${data.prescricao.medicamentos.length}
+Status: ${data.prescricao.status}
+
+${JSON.stringify(data, null, 2)}</span>`;
+                } else {
+                    result.innerHTML = `<span class="error">❌ Erro: ${JSON.stringify(data, null, 2)}</span>`;
+                }
+            } catch (error) {
+                result.innerHTML = `<span class="error">❌ Erro: ${error.message}</span>`;
+            }
+        }
+
+        async function listarPrescricoes() {
+            const result = document.getElementById('resultListarPrescricoes');
+            
+            if (!tokenCliente) {
+                result.innerHTML = '<span class="error">❌ Faça login como cliente primeiro!</span>';
+                return;
+            }
+
+            result.innerHTML = '<span class="info">Listando prescrições...</span>';
+
+            try {
+                const response = await fetch(`${API_URL}/historico/1/prescricoes`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${tokenCliente}`
+                    }
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    result.innerHTML = `<span class="success">✅ Prescrições encontradas!
+
+Total: ${data.total_prescricoes}
+
+${JSON.stringify(data, null, 2)}</span>`;
+                } else {
+                    result.innerHTML = `<span class="error">❌ Erro: ${JSON.stringify(data, null, 2)}</span>`;
+                }
+            } catch (error) {
+                result.innerHTML = `<span class="error">❌ Erro: ${error.message}</span>`;
+            }
+        }
+
+        async function listarConsultas() {
+            const result = document.getElementById('resultListarConsultas');
+            
+            if (!tokenCliente) {
+                result.innerHTML = '<span class="error">❌ Faça login como cliente primeiro!</span>';
+                return;
+            }
+
+            result.innerHTML = '<span class="info">Listando consultas...</span>';
+
+            try {
+                const response = await fetch(`${API_URL}/consultas/1`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${tokenCliente}`
+                    }
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    result.innerHTML = `<span class="success">✅ Consultas encontradas!
+
+Total: ${data.total_consultas}
+
+${JSON.stringify(data, null, 2)}</span>`;
+                } else {
+                    result.innerHTML = `<span class="error">❌ Erro: ${JSON.stringify(data, null, 2)}</span>`;
+                }
+            } catch (error) {
+                result.innerHTML = `<span class="error">❌ Erro: ${error.message}</span>`;
+            }
+        }
+
+        async function verDetalhes() {
+            const result = document.getElementById('resultDetalhes');
+            
+            if (!tokenCliente) {
+                result.innerHTML = '<span class="error">❌ Faça login como cliente primeiro!</span>';
+                return;
+            }
+
+            result.innerHTML = '<span class="info">Buscando detalhes...</span>';
+
+            try {
+                const response = await fetch(`${API_URL}/prescricoes/1`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${tokenCliente}`
+                    }
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    result.innerHTML = `<span class="success">✅ Detalhes da prescrição!
+
+${JSON.stringify(data, null, 2)}</span>`;
+                } else {
+                    result.innerHTML = `<span class="error">❌ Erro: ${JSON.stringify(data, null, 2)}</span>`;
+                }
+            } catch (error) {
+                result.innerHTML = `<span class="error">❌ Erro: ${error.message}</span>`;
+            }
+        }
+    </script>
+</body>
+</html>

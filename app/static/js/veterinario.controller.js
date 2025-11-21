@@ -19,7 +19,7 @@ class VeterinarioController {
         }
 
         const user = Auth.getUser();
-        if (user.tipo !== 'veterinario') {
+        if (user.tipo !== 'Veterinario') {
             Utils.showError('Acesso negado. Apenas veterinários podem acessar esta página.');
             Utils.redirect('index.html', 2000);
             return;
@@ -130,17 +130,30 @@ class VeterinarioController {
             return;
         }
 
+        if (cpfCliente.length !== 11 || !/^\d+$/.test(cpfCliente)) {
+            Utils.showError('CPF deve conter exatamente 11 dígitos numéricos');
+            return;
+        }
+
+        Utils.showLoading(this.btnBuscarPet);
+
         try {
-            const response = await api.getDadosPet();
+            const response = await api.buscarPetPorCpf(cpfCliente);
             
             if (response.success) {
                 this.currentCpfCliente = cpfCliente;
+                this.currentPetId = response.data.id_pet;
                 this.displayPetInfo(response.data);
+                Utils.showSuccess('Pet encontrado!');
             } else {
-                Utils.showError('Pet não encontrado');
+                Utils.showError(response.error || 'Pet não encontrado');
+                this.petInfoResult.style.display = 'none';
             }
         } catch (error) {
             Utils.showError(CONFIG.MESSAGES.ERROR_NETWORK);
+            this.petInfoResult.style.display = 'none';
+        } finally {
+            Utils.hideLoading(this.btnBuscarPet);
         }
     }
 
@@ -150,8 +163,8 @@ class VeterinarioController {
     displayPetInfo(petData) {
         document.getElementById('pet-nome').textContent = petData.nome_pet || 'N/A';
         document.getElementById('pet-raca').textContent = petData.raca_pet || 'N/A';
-        document.getElementById('pet-idade').textContent = petData.idade_pet || 'N/A';
-        document.getElementById('pet-tutor').textContent = Auth.getUser()?.nome || 'N/A';
+        document.getElementById('pet-idade').textContent = petData.idade || 'N/A';
+        document.getElementById('pet-tutor').textContent = petData.tutor_nome || 'N/A';
         document.getElementById('pet-obs').textContent = petData.observacoes_pet || 'Nenhuma';
         
         this.petInfoResult.style.display = 'block';
@@ -166,11 +179,25 @@ class VeterinarioController {
         const form = event.target;
         const formData = new FormData(form);
         
+        const cpfCliente = formData.get('cpf_cliente');
+        const dataConsulta = formData.get('data_consulta');
+        const valor = parseFloat(formData.get('valor')) || 150.00;
+        
+        // Validações
+        if (!cpfCliente || cpfCliente.length !== 11) {
+            Utils.showError('CPF deve ter 11 dígitos');
+            return;
+        }
+        
+        if (!dataConsulta) {
+            Utils.showError('Data da consulta é obrigatória');
+            return;
+        }
+        
         const dados = {
-            servico: 'Consulta',
-            data_agendamento: formData.get('data_consulta'),
-            hora_agendamento: formData.get('hora_consulta'),
-            cpf_cliente: formData.get('cpf_cliente'),
+            cpf_cliente: cpfCliente,
+            data_agendamento: dataConsulta,
+            valor: valor,
             motivo: formData.get('motivo'),
             observacoes: formData.get('observacoes')
         };
@@ -179,11 +206,7 @@ class VeterinarioController {
         Utils.showLoading(submitBtn);
 
         try {
-            const response = await api.criarAgendamento(
-                dados.servico,
-                dados.data_agendamento,
-                dados.hora_agendamento
-            );
+            const response = await api.criarAgendamento(dados);
 
             if (response.success) {
                 Utils.showSuccess('Consulta agendada com sucesso!');
