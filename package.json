@@ -1,0 +1,22 @@
+{
+  "name": "petcare",
+  "version": "1.0.0",
+  "description": "![Flask](https://img.shields.io/badge/Flask-3.1.2-green) ![Python](https://img.shields.io/badge/Python-3.13.5-blue) ![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-yellow) ![Status](https://img.shields.io/badge/Status-Integrado-success)",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "mongoose": "^8.20.1",
+    "mysql2": "^3.15.3"
+  }
+}
